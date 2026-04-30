@@ -1,40 +1,24 @@
-name: Deploy Vue App to GitHub Pages (gh-pages branch)
+name: Deploy oqapi Country Reports
 
 on:
   push:
-    branches: ["main"]
-  workflow_dispatch:
-
-permissions:
-  contents: write  # Required to push to gh-pages branch
+    branches: [main]
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
-          cache-dependency-path: oqapi-country-reports-vue/package-lock.json
+      - name: Install and Build
+        run: |
+          cd oqapi-country-reports-vue
+          npm install
+          npm run build
 
-      - name: Install dependencies
-        working-directory: oqapi-country-reports-vue
-        run: npm ci
-
-      - name: Build Vue app
-        working-directory: oqapi-country-reports-vue
-        run: npm run build
-        env:
-          VITE_BASE_URL: /osm-quality-country-reports/
-
-      - name: Deploy to gh-pages branch
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./oqapi-country-reports-vue/dist
-          publish_branch: gh-pages
