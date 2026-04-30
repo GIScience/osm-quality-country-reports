@@ -2,7 +2,7 @@ name: Deploy Vue App to GitHub Pages (gh-pages branch)
 
 on:
   push:
-    branches: ["master"]
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
