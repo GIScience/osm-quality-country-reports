@@ -28,6 +28,72 @@ declare const pmtiles: any;
 const selectedCountry = ref('');
 const selectedTopic = ref('');
 const topicId = ref(0);
+const isEmbed = ref(false);
+
+onMounted(async () => {
+  // Detect if we're embedded in an iframe or HDX window
+  isEmbed.value = window.self !== window.top || new URLSearchParams(window.location.search).has('embed');
+  
+  // Apply embed mode class to body for global styling
+  if (isEmbed.value) {
+    document.body.classList.add('embed-mode');
+    
+    // Notify parent window of content height changes (for iframe embedding)
+    const notifyParentResize = () => {
+      if (window.parent !== window) {
+        const height = document.documentElement.scrollHeight;
+        window.parent.postMessage({ type: 'resize', height }, '*');
+      }
+    };
+    
+    // Observe content changes to notify parent
+    const resizeObserver = new ResizeObserver(() => {
+      notifyParentResize();
+    });
+    resizeObserver.observe(document.documentElement);
+    
+    // Also notify on mount
+    setTimeout(notifyParentResize, 1000);
+  }
+  
+  const fetchedCountries = await fetchAvailableCountries();
+  countries.value = fetchedCountries.map(c => ({ value: c.code, label: c.name }));
+
+  if (countries.value.length > 0) {
+    const defaultCountry = 'RWA';
+    selectedCountry.value = countries.value.find(c => c.value === defaultCountry)?.value || countries.value[0].value;
+  }
+
+  topics.value = ['roads-all-highways', 'building-area'];
+
+  handleHashRouting();
+  window.addEventListener('hashchange', handleHashRouting);
+
+  // Setup ResizeObserver for maps and containers
+  setTimeout(() => {
+    const resizeObserver = new ResizeObserver(() => {
+      // Trigger map resize
+      window.dispatchEvent(new Event('resize'));
+      
+      // Also trigger Plotly resize
+      if (typeof Plotly !== 'undefined') {
+        ['comparison-plot', 'currentness-plot', 'completeness-plot', 'tag-treemap'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) Plotly.Plots.resize(el);
+        });
+      }
+    });
+    
+    // Observe map containers
+    document.querySelectorAll('[id="road_comparison_map"], [id="current_map"], [id="completeness_map"], #tag-treemap').forEach(el => {
+      if (el) resizeObserver.observe(el);
+    });
+    
+    // Observe main container for embed mode
+    const mainContainer = document.querySelector('.page-content');
+    if (mainContainer) resizeObserver.observe(mainContainer);
+  }, 1000);
+});
 
 const countries = ref<{ value: string; label: string }[]>([]);
 const topics = ref<string[]>([]);
@@ -78,31 +144,6 @@ const map3Layer = ref('h3_hexgrid');
 
 const schoolSwitchVisible = ref(false);
 const schoolSubTopic = ref('operator');
-
-onMounted(async () => {
-  const fetchedCountries = await fetchAvailableCountries();
-  countries.value = fetchedCountries.map(c => ({ value: c.code, label: c.name }));
-
-  if (countries.value.length > 0) {
-    const defaultCountry = 'RWA';
-    selectedCountry.value = countries.value.find(c => c.value === defaultCountry)?.value || countries.value[0].value;
-  }
-
-  topics.value = ['roads-all-highways', 'building-area'];
-
-  handleHashRouting();
-  window.addEventListener('hashchange', handleHashRouting);
-
-  // Setup ResizeObserver for maps
-  setTimeout(() => {
-    const resizeObserver = new ResizeObserver(() => {
-      window.dispatchEvent(new Event('resize'));
-    });
-    document.querySelectorAll('.map-container, [id="road_comparison_map"], [id="current_map"], [id="completeness_map"]').forEach(el => {
-      resizeObserver.observe(el);
-    });
-  }, 1000);
-});
 
 function handleHashRouting() {
   const hash = window.location.hash.replace(/^#\/?/, '');
@@ -452,7 +493,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="h-screen w-full overflow-hidden flex flex-col relative bg-[#F3F3F3] p-2 gap-2">
+  <div :class="['h-full w-full overflow-hidden flex flex-col relative bg-[#F3F3F3] p-2 gap-2', isEmbed ? 'embed-mode' : '']">
     <ReportHeader
       v-model:selectedCountry="selectedCountry"
       v-model:selectedTopic="selectedTopic"
@@ -697,6 +738,12 @@ onUnmounted(() => {
   flex-direction: column;
   gap: 0.2rem;
   min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.embed-mode .page-content.flexible {
+  overflow-y: auto;
 }
 
 .box-row {
@@ -1134,6 +1181,103 @@ onUnmounted(() => {
 
   .box-row.flexible .image-box:not(#tile5) {
     order: 0;
+  }
+}
+
+/* Embed mode styles for HDX integration */
+.embed-mode {
+  padding: 0.25rem !important;
+  gap: 0.25rem !important;
+}
+
+.embed-mode .box h3 {
+  font-size: 1.25rem !important;
+  min-height: 1.5rem !important;
+}
+
+.embed-mode .box h4 {
+  font-size: 0.75rem !important;
+  min-height: 1rem !important;
+}
+
+.embed-mode .tile-secondary h3 {
+  font-size: 0.9rem !important;
+}
+
+.embed-mode .image-box .plot-container {
+  min-height: 120px;
+}
+
+.embed-mode .map-container {
+  min-height: 180px;
+}
+
+.embed-mode .tile-header {
+  font-size: 0.875rem !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.embed-mode .map-description {
+  font-size: 0.65rem !important;
+  padding: 0.4rem !important;
+  margin-top: 0.25rem !important;
+}
+
+.embed-mode .indicator-selector,
+.embed-mode .grid-selector {
+  font-size: 0.65rem !important;
+  padding: 0.15rem 0.3rem !important;
+}
+
+.embed-mode .legend {
+  font-size: 0.45rem !important;
+  padding: 3px 4px !important;
+}
+
+.embed-mode .bar-item .label,
+.embed-mode .bar-item .value {
+  font-size: 0.65rem !important;
+}
+
+.embed-mode .switch-btn {
+  font-size: 0.65rem !important;
+  padding: 0.3rem 0.4rem !important;
+}
+
+.embed-mode #tag-treemap {
+  min-height: 200px !important;
+}
+
+/* Make plots more compact in embed mode */
+.embed-mode .plot-container > div {
+  min-height: 120px !important;
+}
+
+/* Ensure maps fill available space in embed */
+.embed-mode .image-box > .box {
+  flex: 1 1 0 !important;
+  min-height: 200px !important;
+}
+
+/* Very narrow embed containers - stack everything vertically */
+@media (max-width: 600px) {
+  .embed-mode .box-row.flexible .grid {
+    flex-direction: column !important;
+    flex-wrap: wrap !important;
+  }
+  
+  .embed-mode .image-box {
+    width: 100% !important;
+    min-width: unset !important;
+  }
+  
+  .embed-mode .map-container {
+    min-height: 250px !important;
+  }
+  
+  .embed-mode .plot-container {
+    min-height: 180px !important;
   }
 }
 </style>
