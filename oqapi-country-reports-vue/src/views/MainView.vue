@@ -1215,45 +1215,46 @@ onUnmounted(() => {
 
 /* Smaller header in embed mode */
 .embed-mode header {
-  padding: 0.25rem 0.5rem !important;
-  gap: 0.25rem !important;
+  padding: 0.1rem 0.3rem !important;
+  gap: 0.1rem !important;
 }
 
 .embed-mode .header-title {
-  font-size: 1rem !important;
+  font-size: 0.9rem !important;
   margin-left: 0 !important;
 }
 
 .embed-mode .title-logo {
-  height: 24px !important;
+  height: 20px !important;
 }
 
 .embed-mode .header-selectors {
-  gap: 0.5rem !important;
+  gap: 0.3rem !important;
 }
 
 .embed-mode .selector-group.horizontal label {
-  font-size: 0.75rem !important;
+  font-size: 0.7rem !important;
 }
 
 .embed-mode .country-select {
-  font-size: 0.75rem !important;
-  padding: 0.2rem 0.3rem !important;
+  font-size: 0.7rem !important;
+  padding: 0.15rem 0.25rem !important;
 }
 
 /* Smaller footer in embed mode */
 .embed-mode footer {
-  padding: 0.2rem 0.5rem !important;
-  font-size: 0.65rem !important;
+  padding: 0.1rem 0.3rem !important;
+  font-size: 0.6rem !important;
+  gap: 0.25rem !important;
 }
 
 .embed-mode .footer-btn {
-  padding: 0.2rem 0.3rem !important;
-  font-size: 0.65rem !important;
+  padding: 0.1rem 0.2rem !important;
+  font-size: 0.6rem !important;
 }
 
 .embed-mode .ohsome-link img {
-  height: 18px !important;
+  height: 15px !important;
 }
 
 /* Compact tiles */
@@ -1276,79 +1277,115 @@ onUnmounted(() => {
 
 /* Smaller maps - ensure they're visible */
 .embed-mode .map-container {
-  min-height: 180px !important;
-  flex: 1 1 180px !important;
+  min-height: 140px !important;
+  flex: 1 1 140px !important;
 }
 
 .embed-mode .image-box > .box {
-  min-height: 200px !important;
-  flex: 1 1 200px !important;
+  min-height: 150px !important;
+  flex: 1 1 150px !important;
 }
 
 /* Smaller plots */
 .embed-mode .image-box .plot-container {
-  min-height: 120px !important;
-  flex: 1 1 120px !important;
+  min-height: 100px !important;
+  flex: 1 1 100px !important;
 }
 
 .embed-mode .plot-container > div {
-  min-height: 120px !important;
+  min-height: 100px !important;
 }
 
 /* Compact text elements */
 .embed-mode .tile-header {
-  font-size: 0.8rem !important;
-  margin-top: 0.3rem !important;
-  margin-bottom: 0.3rem !important;
+  font-size: 0.7rem !important;
+  margin-top: 0.2rem !important;
+  margin-bottom: 0.2rem !important;
 }
 
 .embed-mode .map-description {
-  font-size: 0.6rem !important;
-  padding: 0.3rem !important;
-  margin-top: 0.2rem !important;
-  line-height: 1.2 !important;
+  font-size: 0.55rem !important;
+  padding: 0.2rem !important;
+  margin-top: 0.15rem !important;
+  line-height: 1.1 !important;
 }
 
 .embed-mode .indicator-selector,
 .embed-mode .grid-selector {
-  font-size: 0.6rem !important;
-  padding: 0.1rem 0.25rem !important;
+  font-size: 0.55rem !important;
+  padding: 0.1rem 0.2rem !important;
+  margin-bottom: 0.2rem !important;
+  margin-top: 0.2rem !important;
 }
 
 .embed-mode .legend {
-  font-size: 0.4rem !important;
-  padding: 2px 3px !important;
-  line-height: 1.1 !important;
+  font-size: 0.35rem !important;
+  padding: 1px 2px !important;
+  line-height: 1 !important;
 }
 
 .embed-mode .bar-item .label,
 .embed-mode .bar-item .value {
-  font-size: 0.6rem !important;
+  font-size: 0.55rem !important;
 }
 
 .embed-mode .bar-container {
-  height: 8px !important;
+  height: 6px !important;
+}
+
+.embed-mode .bar-chart {
+  gap: 0.2rem !important;
+  margin-top: 0.2rem !important;
 }
 
 .embed-mode .switch-btn {
-  font-size: 0.6rem !important;
-  padding: 0.2rem 0.3rem !important;
+  font-size: 0.55rem !important;
+  padding: 0.15rem 0.25rem !important;
+}
+
+/* Make treemap tile header more compact */
+.embed-mode #tile5 .tile-header {
+  margin-top: 0.2rem !important;
+  margin-bottom: 0.2rem !important;
+}
+
+/* Reduce margin for school switch in embed mode */
+.embed-mode #school-treemap-switch {
+  margin: 1.5rem auto -1rem auto !important;
 }
 
 .embed-mode #tag-treemap {
-  min-height: 180px !important;
-  flex: 1 1 180px !important;
+  min-height: 150px !important;
+  flex: 1 1 150px !important;
 }
 
-/* Make page content scrollable if needed */
+/* Make page content fit without scrolling in embed mode */
 .embed-mode .page-content.flexible {
-  overflow-y: auto !important;
+  overflow: hidden !important;
   flex: 1 1 auto !important;
+}
+
+/* Make stat boxes row more compact in embed mode */
+.embed-mode .box-row:not(.flexible) {
+  padding: 0.1rem !important;
+}
+
+.embed-mode .box-row:not(.flexible) .box h3 {
+  font-size: 0.8rem !important;
+  min-height: 1rem !important;
+  margin-top: 0.1rem !important;
+  margin-bottom: 0 !important;
+}
+
+.embed-mode .box-row:not(.flexible) .box h4 {
+  font-size: 0.6rem !important;
+  min-height: 0.7rem !important;
+  margin: 0.05rem 0 !important;
 }
 
 /* Ensure tile 5 is visible */
 .embed-mode #tile5 {
-  min-height: 200px !important;
+  min-height: 160px !important;
 }
 
 /* Smaller HeiGIT logo in embed mode */
