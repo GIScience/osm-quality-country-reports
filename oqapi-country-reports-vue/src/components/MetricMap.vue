@@ -16,6 +16,8 @@ const props = defineProps<{
   topicId?: Number;
 }>();
 
+let resizeHandler: (() => void) | null = null;
+
 const mapContainer = ref<HTMLElement | null>(null);
 let mapInstance: maplibregl.Map | null = null;
 let popupInstance: maplibregl.Popup | null = null;
@@ -183,6 +185,14 @@ onMounted(() => {
   nextTick(() => {
     initMap();
   });
+  
+  // Handle resize events for embed mode
+  resizeHandler = () => {
+    if (mapInstance) {
+      mapInstance.resize();
+    }
+  };
+  window.addEventListener('resize', resizeHandler);
 });
 
 // Watch for prop changes (but not deep watch on lookup to avoid excessive updates)
@@ -283,6 +293,13 @@ watch(
 
 onUnmounted(() => {
   console.log('[MetricMap] Component unmounting, containerId:', props.containerId);
+  
+  // Remove resize handler
+  if (resizeHandler) {
+    window.removeEventListener('resize', resizeHandler);
+    resizeHandler = null;
+  }
+  
   if (mapInstance) {
     mapInstance.remove();
     mapInstance = null;

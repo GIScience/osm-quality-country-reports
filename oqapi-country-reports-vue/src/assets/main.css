@@ -28,6 +28,28 @@ body {
   }
 }
 
+/* Embed mode - when dashboard is inside HDX iframe */
+body.embed-mode {
+  padding: 0;
+  height: 100%;
+  overflow: hidden; /* Main scrolling handled by .page-content.flexible */
+}
+
+body.embed-mode #app {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Ensure smooth scrolling in embed mode */
+.embed-mode .page-content.flexible {
+  scroll-behavior: smooth;
+}
+
+/* Scale down fonts and spacing for embed mode */
+.embed-mode {
+  font-size: 0.9rem;
+}
+
 body {
   padding: var(--spacing);
   font-family: var(--font-sans);
