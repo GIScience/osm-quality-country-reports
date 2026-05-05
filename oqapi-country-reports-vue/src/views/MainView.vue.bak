@@ -32,18 +32,7 @@ const isEmbed = ref(false);
 
 onMounted(async () => {
   // Detect if we're embedded in an iframe or HDX window
-  const inIframe = window.self !== window.top;
-  const hasEmbedParam = new URLSearchParams(window.location.search).has('embed');
-  
-  // If URL has ?embed but we're not in an iframe (e.g., HDX fullscreen opened new tab),
-  // redirect to remove the parameter so users see the normal version
-  if (hasEmbedParam && !inIframe) {
-    const newUrl = window.location.pathname + window.location.hash;
-    window.history.replaceState(null, '', newUrl);
-    isEmbed.value = false;
-  } else {
-    isEmbed.value = inIframe || hasEmbedParam;
-  }
+  isEmbed.value = window.self !== window.top || new URLSearchParams(window.location.search).has('embed');
   
   // Apply embed mode class to body for global styling
   if (isEmbed.value) {
@@ -645,7 +634,7 @@ onUnmounted(() => {
                 borderRadius: 'var(--border-radius)',
                 textAlign: 'center',
                 marginBottom: '0.75rem'
-              }]" class="banner-text">
+              }]">
                 {{ banner2Level }} {{ prettifyIndicator(map2Indicator) }}
               </div>
             </div>
@@ -699,7 +688,7 @@ onUnmounted(() => {
                 borderRadius: 'var(--border-radius)',
                 textAlign: 'center',
                 marginBottom: '0.75rem'
-              }]" class="banner-text">
+              }]">
                 {{ banner3Level }} {{ prettifyIndicator(map3Indicator) }}
               </div>
             </div>
@@ -1358,9 +1347,9 @@ onUnmounted(() => {
 }
 
 /* Smaller banner text in embed mode */
-.embed-mode .banner-text {
-  font-size: 0.65rem !important;
-  padding: 0.1rem 0.4rem !important;
+.embed-mode .banner div[style*="banner"] {
+  font-size: 0.7rem !important;
+  padding: 0.15rem 0.5rem !important;
 }
 
 .embed-mode .banner {
