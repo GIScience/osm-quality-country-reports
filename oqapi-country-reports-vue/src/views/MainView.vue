@@ -1587,8 +1587,8 @@ onUnmounted(() => {
 
 .iframe-2col-grid .tile-header {
   font-size: 0.85rem !important;
-  margin-top: 0.3rem !important;
-  margin-bottom: 0.3rem !important;
+  margin-top: 2rem !important;
+  margin-bottom: -2rem !important;
 }
 
 .iframe-2col-grid .indicator-selector,
@@ -1667,9 +1667,6 @@ onUnmounted(() => {
   min-height: 0 !important;
   overflow: hidden !important;
   margin-bottom: 1rem !important;
-  padding: 0 !important;
-  border: none !important;
-  border-radius: 0 !important;
 }
 
 .iframe-2col-grid .tile6-left .box > div:first-child {
