@@ -1567,6 +1567,8 @@ onUnmounted(() => {
 .iframe-2col-grid #tag-treemap {
   min-height: 150px !important;
   flex: 1 1 150px !important;
+  margin-top: -2rem !important;
+
 }
 
 .iframe-2col-grid .plot-container {
@@ -1617,6 +1619,7 @@ onUnmounted(() => {
 .iframe-2col-grid .bar-chart {
   gap: 0.2rem !important;
   margin-top: 0.2rem !important;
+  margin-bottom: 2rem !important;
 }
 
 .iframe-2col-grid .switch-btn {
@@ -1651,6 +1654,7 @@ onUnmounted(() => {
   gap: 0.25rem !important;
   min-height: 0 !important;
   overflow: hidden !important;
+  margin-top: 0.5rem !important;
 }
 
 .iframe-2col-grid .tile6-right {
@@ -1660,6 +1664,7 @@ onUnmounted(() => {
   gap: 0.25rem !important;
   min-height: 0 !important;
   overflow: hidden !important;
+  margin-top: 0.5rem !important;
 }
 
 .iframe-2col-grid .tile6-left .box {
@@ -1667,6 +1672,7 @@ onUnmounted(() => {
   min-height: 0 !important;
   overflow: hidden !important;
   margin-bottom: 1rem !important;
+  width: 100% !important;
 }
 
 .iframe-2col-grid .tile6-left .box > div:first-child {
