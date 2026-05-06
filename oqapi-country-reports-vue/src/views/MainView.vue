@@ -37,18 +37,18 @@ onMounted(async () => {
   const hasEmbedParam = new URLSearchParams(window.location.search).has('embed');
   const hasIframe2ColParam = new URLSearchParams(window.location.search).has('iframe-2col');
   
-  // If URL has ?embed but we're not in an iframe (e.g., HDX fullscreen opened new tab),
+  // If URL has ?embed or ?iframe-2col but we're not in an iframe (e.g., HDX fullscreen opened new tab),
   // redirect to remove the parameter so users see the normal version
-  if (hasEmbedParam && !inIframe) {
+  if ((hasEmbedParam || hasIframe2ColParam) && !inIframe) {
     const newUrl = window.location.pathname + window.location.hash;
     window.history.replaceState(null, '', newUrl);
     isEmbed.value = false;
+    isIframe2Col.value = false;
   } else {
     isEmbed.value = inIframe || hasEmbedParam;
+    // Automatically use iframe-2col mode when inside an iframe
+    isIframe2Col.value = inIframe || hasIframe2ColParam;
   }
-  
-  // Detect iframe-2col mode (2-column layout with tile 5 and map 1)
-  isIframe2Col.value = hasIframe2ColParam || (inIframe && new URLSearchParams(window.location.search).has('iframe-2col'));
   
   // Apply embed mode class to body for global styling
   if (isEmbed.value || isIframe2Col.value) {
