@@ -22,7 +22,7 @@ import {
   setCurrentSchoolSubTopic
 } from '../utils/helpers';
 
-declare const Plotly: any;
+import Plotly from 'plotly.js-dist-min';
 declare const pmtiles: any;
 
 const selectedCountry = ref('');
@@ -92,12 +92,10 @@ onMounted(async () => {
       window.dispatchEvent(new Event('resize'));
       
       // Also trigger Plotly resize
-      if (typeof Plotly !== 'undefined') {
-        ['comparison-plot', 'currentness-plot', 'completeness-plot', 'tag-treemap'].forEach(id => {
-          const el = document.getElementById(id);
-          if (el) Plotly.Plots.resize(el);
-        });
-      }
+      ['comparison-plot', 'currentness-plot', 'completeness-plot', 'tag-treemap'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) Plotly.Plots.resize(el);
+      });
     });
     
     // Observe map containers
@@ -439,8 +437,8 @@ async function loadTreemap() {
       tile1Label.value = '';
     }
 
-    const trace = {
-      type: 'treemap' as const,
+    const trace: any = {
+      type: 'treemap',
       labels,
       parents: labels.map(() => ''),
       values,
