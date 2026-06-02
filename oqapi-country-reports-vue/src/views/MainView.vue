@@ -7,12 +7,13 @@ import {
   fetchAvailableCountries,
   loadAvailableTopics,
   loadIndicators,
-  loadIndicatorLookup,
+  loadIndicatorLookups,
   getPMTilesBounds,
   loadTagCoverage,
   type PMTilesBounds,
   type TagCoverageItem
 } from '../services/dataService';
+import { clearParquetCache } from '../utils/duckdb';
 import {
   prettifyTopic,
   prettifyIndicator,
@@ -194,6 +195,7 @@ watch(selectedTopic, async (newTopic) => {
 
 async function loadCountry(code: string, updateTopics: boolean) {
   isLoading.value = true;
+  clearParquetCache();
 
   const urls = buildUrls(code, getCurrentTopic());
   pmtilesUrl.value = urls.pmtilesUrl;
@@ -269,31 +271,35 @@ function getCurrentTopic(): string {
 
 async function loadMapData() {
   const topicName = getCurrentTopic();
+  const indicators = [map1Indicator.value, map2Indicator.value, map3Indicator.value].filter(Boolean);
 
-  if (map1Indicator.value) {
-    const result = await loadIndicatorLookup(parquetUrl.value, topicName, map1Indicator.value);
-    map1Lookup.value = result.lookup;
-    map1Avg.value = result.avg;
-    map1Description.value = result.description;
-    banner1Level.value = getBannerLevel(result.avg);
+  if (indicators.length === 0) return;
+
+  const results = await loadIndicatorLookups(parquetUrl.value, topicName, indicators);
+
+  const [r1, r2, r3] = results;
+
+  if (map1Indicator.value && r1) {
+    map1Lookup.value = r1.lookup;
+    map1Avg.value = r1.avg;
+    map1Description.value = r1.description;
+    banner1Level.value = getBannerLevel(r1.avg);
     loadPlot(map1Indicator.value, 'comparison-plot');
   }
 
-  if (map2Indicator.value) {
-    const result = await loadIndicatorLookup(parquetUrl.value, topicName, map2Indicator.value);
-    map2Lookup.value = result.lookup;
-    map2Avg.value = result.avg;
-    map2Description.value = result.description;
-    banner2Level.value = getBannerLevel(result.avg);
+  if (map2Indicator.value && r2) {
+    map2Lookup.value = r2.lookup;
+    map2Avg.value = r2.avg;
+    map2Description.value = r2.description;
+    banner2Level.value = getBannerLevel(r2.avg);
     loadPlot(map2Indicator.value, 'currentness-plot');
   }
 
-  if (map3Indicator.value) {
-    const result = await loadIndicatorLookup(parquetUrl.value, topicName, map3Indicator.value);
-    map3Lookup.value = result.lookup;
-    map3Avg.value = result.avg;
-    map3Description.value = result.description;
-    banner3Level.value = getBannerLevel(result.avg);
+  if (map3Indicator.value && r3) {
+    map3Lookup.value = r3.lookup;
+    map3Avg.value = r3.avg;
+    map3Description.value = r3.description;
+    banner3Level.value = getBannerLevel(r3.avg);
     loadPlot(map3Indicator.value, 'completeness-plot');
   }
 }
@@ -1339,7 +1345,7 @@ onUnmounted(() => {
 }
 
 .embed-mode .header-selectors {
-  gap: 0.15rem !important;
+  gap: 0.5rem !important;
 }
 
 .embed-mode .selector-group.horizontal label {
@@ -1354,7 +1360,7 @@ onUnmounted(() => {
 /* Smaller footer in embed mode */
 .embed-mode footer {
   padding: 0.1rem 0.3rem !important;
-  font-size: 0.6rem !important;
+  font-size: 5rem !important;
   gap: 0.25rem !important;
 }
 

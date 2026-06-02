@@ -151,6 +151,76 @@ export interface IndicatorLookup {
   description: string;
 }
 
+export async function loadIndicatorLookups(
+  parquetUrl: string,
+  topicName: string,
+  indicatorNames: string[]
+): Promise<IndicatorLookup[]> {
+  if (indicatorNames.length === 0) return [];
+
+  const { db, conn } = await initDuckDB();
+
+  try {
+    const tableName = await registerParquetFile(parquetUrl, db);
+
+    const topicFilter = `topic = '${topicName}'`;
+    const indicatorFilter = indicatorNames.map(n => `'${n}'`).join(", ");
+
+    const result = await conn.query(`
+      SELECT indicator, geomID, value, description
+      FROM read_parquet('${tableName}')
+      WHERE ${topicFilter}
+        AND indicator IN (${indicatorFilter})
+    `);
+
+    const resultArray = toArray(result);
+
+    const groups: Record<string, { sum: number; count: number; description: string; lookup: Record<string, number> }> = {};
+    for (const name of indicatorNames) {
+      groups[name] = { sum: 0, count: 0, description: "", lookup: {} };
+    }
+
+    resultArray.forEach((r: any) => {
+      if (r.value == null) return;
+      const value = Number(r.value);
+      if (isNaN(value)) return;
+
+      const indicator = String(r.indicator);
+      if (!groups[indicator]) return;
+
+      const geomID = String(r.geomID);
+      groups[indicator].lookup[geomID] = value;
+
+      if (geomID.includes("_")) {
+        const parts = geomID.split("_");
+        const suffix = parts[parts.length - 1];
+        if (suffix && suffix.length > 0) {
+          groups[indicator].lookup[suffix] = value;
+        }
+      }
+
+      groups[indicator].sum += value;
+      groups[indicator].count++;
+
+      if (geomID.toLowerCase().includes("adm0") && r.description) {
+        groups[indicator].description = r.description;
+      }
+    });
+
+    return indicatorNames.map(name => {
+      const g = groups[name];
+      return {
+        lookup: g.lookup,
+        avg: g.count > 0 ? g.sum / g.count : 0,
+        description: g.description
+      };
+    });
+  } catch (e) {
+    console.error("Failed to load indicator lookups:", e);
+    return indicatorNames.map(() => ({ lookup: {}, avg: 0, description: "" }));
+  }
+}
+
 export async function loadIndicatorLookup(
   parquetUrl: string,
   topicName: string,

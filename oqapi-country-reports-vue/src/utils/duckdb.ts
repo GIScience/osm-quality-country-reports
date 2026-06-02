@@ -68,16 +68,26 @@ async function initDuckDBInternal(): Promise<{ db: AsyncDuckDB; conn: AsyncDuckD
 }
 
 let fileCounter = 0;
+const parquetFileCache = new Map<string, string>();
 
 export async function registerParquetFile(parquetUrl: string, db: AsyncDuckDB): Promise<string> {
+  const cached = parquetFileCache.get(parquetUrl);
+  if (cached) return cached;
+
   const resp = await fetch(parquetUrl);
   const parquetData = await resp.arrayBuffer();
   
   fileCounter++;
   const fileName = `data_${fileCounter}.parquet`;
   await db.registerFileBuffer(fileName, new Uint8Array(parquetData));
+
+  parquetFileCache.set(parquetUrl, fileName);
   
   return fileName;
+}
+
+export function clearParquetCache() {
+  parquetFileCache.clear();
 }
 
 export async function queryParquet(query: string, _db: AsyncDuckDB, conn: AsyncDuckDBConnection, tableName: string = 'data.parquet') {
