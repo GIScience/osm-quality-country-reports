@@ -1339,7 +1339,7 @@ onUnmounted(() => {
 }
 
 .embed-mode .header-selectors {
-  gap: 0.3rem !important;
+  gap: 0.15rem !important;
 }
 
 .embed-mode .selector-group.horizontal label {
