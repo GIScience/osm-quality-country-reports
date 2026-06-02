@@ -179,7 +179,11 @@ export async function loadIndicatorLookup(
     let adm0Description = "";
 
     resultArray.forEach((r: any) => {
+      if (r.value == null) return;
+
       const value = Number(r.value);
+      if (isNaN(value)) return;
+
       const geomID = String(r.geomID);
 
       lookup[geomID] = value;
@@ -192,10 +196,8 @@ export async function loadIndicatorLookup(
         }
       }
 
-      if (!isNaN(value)) {
-        sum += value;
-        count++;
-      }
+      sum += value;
+      count++;
 
       if (geomID.toLowerCase().includes("adm0") && r.description) {
         adm0Description = r.description;
