@@ -3,28 +3,68 @@ import type { AsyncDuckDB, AsyncDuckDBConnection } from "@duckdb/duckdb-wasm";
 
 let dbInstance: AsyncDuckDB | null = null;
 let dbConnection: AsyncDuckDBConnection | null = null;
+let initPromise: Promise<{ db: AsyncDuckDB; conn: AsyncDuckDBConnection }> | null = null;
 
 export async function initDuckDB(): Promise<{ db: AsyncDuckDB; conn: AsyncDuckDBConnection }> {
   if (dbInstance && dbConnection) {
     return { db: dbInstance, conn: dbConnection };
   }
 
-  const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
-  const bundle = await duckdb.selectBundle(JSDELIVR_BUNDLES);
+  if (initPromise) {
+    return initPromise;
+  }
 
-  const worker_url = URL.createObjectURL(
-    new Blob([`importScripts("${bundle.mainWorker}");`], { type: "text/javascript" })
-  );
+  initPromise = initDuckDBInternal();
 
-  const worker = new Worker(worker_url);
-  const silentLogger = { log: () => {}, info: () => {}, warn: () => {}, error: () => {} };
-  dbInstance = new duckdb.AsyncDuckDB(silentLogger, worker);
-  await dbInstance.instantiate(bundle.mainModule, bundle.pthreadWorker);
-  URL.revokeObjectURL(worker_url);
+  try {
+    const result = await initPromise;
+    return result;
+  } catch (e) {
+    initPromise = null;
+    dbInstance = null;
+    dbConnection = null;
+    throw e;
+  }
+}
 
-  dbConnection = await dbInstance.connect();
+async function initDuckDBInternal(): Promise<{ db: AsyncDuckDB; conn: AsyncDuckDBConnection }> {
+  const MAX_RETRIES = 3;
 
-  return { db: dbInstance, conn: dbConnection };
+  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+    let worker: Worker | null = null;
+    let workerUrl: string | null = null;
+
+    try {
+      const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
+      const bundle = await duckdb.selectBundle(JSDELIVR_BUNDLES);
+
+      workerUrl = URL.createObjectURL(
+        new Blob([`importScripts("${bundle.mainWorker}");`], { type: "text/javascript" })
+      );
+
+      worker = new Worker(workerUrl);
+      const logger = new duckdb.ConsoleLogger();
+      const db = new duckdb.AsyncDuckDB(logger, worker);
+      await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
+
+      const conn = await db.connect();
+
+      dbInstance = db;
+      dbConnection = conn;
+
+      return { db, conn };
+    } catch (e) {
+      console.warn(`DuckDB init attempt ${attempt + 1}/${MAX_RETRIES} failed:`, e);
+      worker?.terminate();
+      if (workerUrl) URL.revokeObjectURL(workerUrl);
+
+      if (attempt < MAX_RETRIES - 1) {
+        await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
+      }
+    }
+  }
+
+  throw new Error("DuckDB initialization failed after multiple retries");
 }
 
 let fileCounter = 0;
