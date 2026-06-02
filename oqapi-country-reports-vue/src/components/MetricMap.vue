@@ -115,7 +115,7 @@ function updateMapData() {
       "fill-color": [
         "step",
         ["coalesce", ["feature-state", "value"], -1],
-        "#888888",
+        "#bab8b8",
         0, "#F44336",
         0.25, "#FFEB3B",
         0.75, "#4CAF50"
