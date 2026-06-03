@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { prettifyTopic } from '../utils/helpers';
 
 const props = defineProps<{
   selectedCountry: string;
@@ -12,14 +13,6 @@ const emit = defineEmits<{
   (e: 'update:selectedCountry', value: string): void;
   (e: 'update:selectedTopic', value: string): void;
 }>();
-
-function prettifyTopic(slug: string): string {
-  if (!slug) return "";
-  return slug
-    .replace(/_/g, " ")
-    .replace(/-/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
-}
 
 const prettyTopics = computed(() => {
   return props.topics.map(topic => ({
