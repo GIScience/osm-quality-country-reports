@@ -608,7 +608,7 @@ onUnmounted(() => {
               </div>
               <div class="box" style="position: relative;">
                 <MetricMap
-                  :key="'road-comparison-map'"
+                  :key="'comparison-map-' + topicId"
                   containerId="road_comparison_map"
                   :pmtilesUrl="pmtilesUrl"
                   :lookup="map1Lookup"
@@ -662,7 +662,7 @@ onUnmounted(() => {
               </div>
               <div class="box" style="position: relative;">
                 <MetricMap
-                  :key="'current-map'"
+                  :key="'currentness-map-' + topicId"
                   containerId="current_map"
                   :pmtilesUrl="pmtilesUrl"
                   :lookup="map2Lookup"
@@ -716,7 +716,7 @@ onUnmounted(() => {
               </div>
               <div class="box" style="position: relative;">
                 <MetricMap
-                  :key="'completeness-map'"
+                  :key="'completeness-map-' + topicId"
                   containerId="completeness_map"
                   :pmtilesUrl="pmtilesUrl"
                   :lookup="map3Lookup"
@@ -815,7 +815,7 @@ onUnmounted(() => {
                   </div>
                   <div class="box" style="position: relative; flex: 1; min-height: 0;">
                     <MetricMap
-                      :key="'road-comparison-map'"
+                      :key="'comparison-map-' + topicId"
                       containerId="road_comparison_map"
                       :pmtilesUrl="pmtilesUrl"
                       :lookup="map1Lookup"
