@@ -221,68 +221,6 @@ export async function loadIndicatorLookups(
   }
 }
 
-export async function loadIndicatorLookup(
-  parquetUrl: string,
-  topicName: string,
-  indicatorName: string
-): Promise<IndicatorLookup> {
-  const { db, conn } = await initDuckDB();
-
-  try {
-    const tableName = await registerParquetFile(parquetUrl, db);
-
-    const topics = [topicName];
-
-    const topicFilter = topics.map((t) => `topic = '${t}'`).join(" OR ");
-
-    const result = await conn.query(`
-      SELECT *
-      FROM read_parquet('${tableName}')
-      WHERE (${topicFilter})
-        AND indicator = '${indicatorName}'
-    `);
-
-    const resultArray = toArray(result);
-    const lookup: Record<string, number> = {};
-    let sum = 0;
-    let count = 0;
-    let adm0Description = "";
-
-    resultArray.forEach((r: any) => {
-      if (r.value == null) return;
-
-      const value = Number(r.value);
-      if (isNaN(value)) return;
-
-      const geomID = String(r.geomID);
-
-      lookup[geomID] = value;
-
-      if (geomID.includes("_")) {
-        const parts = geomID.split("_");
-        const suffix = parts[parts.length - 1];
-        if (suffix && suffix.length > 0) {
-          lookup[suffix] = value;
-        }
-      }
-
-      sum += value;
-      count++;
-
-      if (geomID.toLowerCase().includes("adm0") && r.description) {
-        adm0Description = r.description;
-      }
-    });
-
-    const avg = count > 0 ? sum / count : 0;
-
-    return { lookup, avg, description: adm0Description };
-  } catch (e) {
-    console.error("Failed to load indicator lookup:", e);
-    return { lookup: {}, avg: 0, description: "" };
-  }
-}
-
 export interface PMTilesBounds {
   minLon: number;
   minLat: number;

@@ -65,40 +65,6 @@
   color: #555;
 }
 
-.ohsome-link {
-  padding: 0.2rem 0.5rem;
-  border-radius: 6px;
-  border: 1px solid var(--color-border);
-  background: #fff;
-
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-
-  text-decoration: none;
-  color: var(--color-text);
-  font-weight: 700;
-  font-size: 0.6rem;
-  letter-spacing: 0.04em;
-}
-
-.ohsome-link img {
-  height: 25px;
-  display: block;
-}
-
-.ohsome-link:hover {
-  background: #f3f3f3;
-}
-
-.ohsome-text {
-  white-space: nowrap;
-}
-
-.footer-right {
-  color: #555;
-}
-
 .footer-center {
   color: #555;
   text-align: center;
