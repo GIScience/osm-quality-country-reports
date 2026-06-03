@@ -90,7 +90,4 @@ export function clearParquetCache() {
   parquetFileCache.clear();
 }
 
-export async function queryParquet(query: string, _db: AsyncDuckDB, conn: AsyncDuckDBConnection, tableName: string = 'data.parquet') {
-  const result = await conn.query(query.replace('data.parquet', tableName));
-  return result;
-}
+
