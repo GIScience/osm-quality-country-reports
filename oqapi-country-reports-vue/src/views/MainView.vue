@@ -1329,39 +1329,28 @@ onUnmounted(() => {
   min-width: 0 !important;
 }
 
-/* Smaller header in embed mode — stay on one row */
+/* Embed mode header — stay on one row */
 .embed-mode header {
-  padding: 0.1rem 0.3rem !important;
-  gap: 0.1rem !important;
   flex-direction: row !important;
   flex-wrap: nowrap !important;
 }
 
 .embed-mode :deep(.header-title) {
-  font-size: 0.9rem !important;
-  margin-left: 0 !important;
   width: auto !important;
-  justify-content: flex-start !important;
-}
-
-.embed-mode :deep(.title-logo) {
-  height: 20px !important;
 }
 
 .embed-mode :deep(.header-selectors) {
-  gap: 0.5rem !important;
+  gap: 1rem !important;
   flex-direction: row !important;
   width: auto !important;
 }
 
 .embed-mode :deep(.selector-group.horizontal label) {
-  font-size: 0.7rem !important;
+  font-size: 0.85rem !important;
 }
 
 .embed-mode :deep(.country-select) {
-  font-size: 0.7rem !important;
-  padding: 0.15rem 0.25rem !important;
-  min-width: 80px !important;
+  font-size: 0.8rem !important;
 }
 
 /* Smaller footer in embed mode */
