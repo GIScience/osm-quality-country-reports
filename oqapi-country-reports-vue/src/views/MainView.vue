@@ -541,7 +541,7 @@ onUnmounted(() => {
             <div class="box box-centered tile-secondary mobile-hidden" style="padding:0;" v-else></div>
             <div class="box tile-secondary mobile-hidden" style="position: relative;">
               <a href="https://heigit.org" target="_blank" class="heigit-tile-link">
-                <img src="https://hot.storage.heigit.org/heigit-hdx-public/oqapi_hdx/logos/heigit-logo.svg" alt="HeiGIT" style="width:160px;height:auto;">
+                <img src="https://hot.storage.heigit.org/heigit-hdx-public/oqapi_hdx/logos/heigit-logo.svg" alt="HeiGIT" style="width:120px;height:auto;">
               </a>
             </div>
           </div>
@@ -931,7 +931,7 @@ onUnmounted(() => {
   font-size: 2rem !important;
   font-weight: 700 !important;
   margin: 0;
-  margin-top: 0.25rem;
+  margin-top: 0rem;
   margin-bottom: 0rem;
   min-height: 2.4rem;
 }
@@ -986,6 +986,7 @@ onUnmounted(() => {
   width: 100%;
   height: auto;
   object-fit: contain;
+  margin-top: 0.5rem !important;
 }
 
 .tile-header {
@@ -994,6 +995,22 @@ onUnmounted(() => {
   font-weight: 800;
   font-size: 1rem;
   margin-bottom: 1rem;
+}
+
+.box-row:not(.flexible) {
+  padding: 0.25rem;
+}
+
+.box-row:not(.flexible) .tile-primary h3 {
+  font-size: 1.5rem !important;
+  min-height: 1.8rem !important;
+  margin-top: 0.15rem !important;
+}
+
+.box-row:not(.flexible) .tile-primary h4 {
+  font-size: 0.8rem !important;
+  min-height: 0.9rem !important;
+  margin: 0.1rem 0 !important;
 }
 
 .map-container {
