@@ -14,11 +14,6 @@ export function prettifyIndicator(name: string): string {
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-export interface CountryInfo {
-  code: string;
-  name: string;
-}
-
 export interface TopicConfig {
   comparisonIndicator: string;
   comparisonLabel: string;
@@ -44,19 +39,6 @@ export const topicConfig: Record<string, TopicConfig> = {
     completenessIndicator: "user-activity",
     completenessLabel: "User Activity",
     completenessFigure: "user-activity"
-  }
-};
-
-export const defaultIndicators: Record<string, { tile6: string; tile7: string; tile8: string }> = {
-  "roads-all-highways": {
-    tile6: "road-comparison",
-    tile7: "currentness",
-    tile8: "attribute-completeness_surface"
-  },
-  "building-area": {
-    tile6: "building-comparison",
-    tile7: "currentness",
-    tile8: "user-activity"
   }
 };
 
@@ -131,6 +113,4 @@ export function buildUrls(code: string, topic: string): BuildUrlsResult {
   };
 }
 
-export function getTopicsForQuery(topic: string): string[] {
-  return [topic];
-}
+

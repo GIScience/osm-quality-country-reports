@@ -7,13 +7,13 @@ declare const pmtiles: any;
 
 const props = defineProps<{
   containerId: string;
-  pmtilesUrl: String;
-  indicatorName: String;
-  layerName: String;
+  pmtilesUrl: string;
+  indicatorName: string;
+  layerName: string;
   lookup: Record<string, number>;
   bounds: { minLon: number; minLat: number; maxLon: number; maxLat: number } | null;
-  sourceName: String;
-  topicId?: Number;
+  sourceName: string;
+  topicId?: number;
 }>();
 
 let resizeHandler: (() => void) | null = null;
@@ -66,9 +66,9 @@ function initMap() {
 function updateMapData() {
   if (!mapInstance || !isMapInitialized || !props.pmtilesUrl) return;
 
-  const sourceName = props.sourceName as string;
-  const layerName = props.layerName as string;
-  const indicatorName = props.indicatorName as string;
+  const sourceName = props.sourceName;
+  const layerName = props.layerName;
+  const indicatorName = props.indicatorName;
 
   // Remove existing layers from this source
   const layers = mapInstance.getStyle().layers || [];
@@ -278,8 +278,8 @@ watch(
   (newLookup) => {
     if (!isMapInitialized || !mapInstance) return;
 
-    const sourceName = props.sourceName as string;
-    const layerName = props.layerName as string;
+    const sourceName = props.sourceName;
+    const layerName = props.layerName;
 
     Object.entries(newLookup).forEach(([id, val]) => {
       mapInstance!.setFeatureState(
@@ -288,7 +288,7 @@ watch(
       );
     });
   },
-  { deep: true }
+    // lookup ref is replaced entirely on data load, so identity check is sufficient
 );
 
 onUnmounted(() => {
