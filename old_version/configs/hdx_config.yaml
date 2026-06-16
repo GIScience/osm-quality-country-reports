@@ -1,0 +1,12 @@
+hdx:
+  site: "prod"
+  api_key: REDACTED
+  owner_org: heidelberg-institute-for-geoinformation-technology
+  data_update_frequency: "Every six months"
+  maintainer: valentin-boehmer-8808
+  maintainer_email: valentin.boehmer@heigit.org
+  private: true
+  url: "https://data.humdata.org/"
+  tags:
+    - "indicators"
+    - "openstreetmap"
