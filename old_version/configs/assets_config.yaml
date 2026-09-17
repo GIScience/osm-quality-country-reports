@@ -13,7 +13,7 @@ grids:
   square:
     resolution_deg: Null
 
-oqapi-version: v1 #v1 or v1-test
+oqapi-version: v1-test #v1 or v1-test
 
 required_topics:
   - roads-all-highways
